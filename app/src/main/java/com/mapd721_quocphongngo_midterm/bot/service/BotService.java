@@ -3,12 +3,10 @@ package com.mapd721_quocphongngo_midterm.bot.service;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.PowerManager;
-import android.preference.PreferenceManager;
 import android.util.Log;
+import com.mapd721_quocphongngo_midterm.bot.notification.NotificationDecorator;
 
 import com.mapd721_quocphongngo_midterm.bot.Constants;
 
@@ -20,7 +18,7 @@ public class BotService extends Service {
     private int messageOrder = 0;
 
     private NotificationManager notificationMgr;
-//    private NotificationDecorator notificationDecorator;
+    private NotificationDecorator notificationDecorator;
 
     public BotService() {
     }
@@ -30,7 +28,7 @@ public class BotService extends Service {
         Log.v(TAG, "onCreate()");
         super.onCreate();
         notificationMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//        notificationDecorator = new NotificationDecorator(this, notificationMgr);
+        notificationDecorator = new NotificationDecorator(this, notificationMgr);
     }
 
     @Override
@@ -54,10 +52,22 @@ public class BotService extends Service {
         int command = data.getInt(CMD);
         Log.d(TAG, "-(<- received command data to service: command=" + command);
 
+        String title = "Notification - BotService";
         if (command == CMD_GENERATE) {
-//            notificationDecorator.displaySimpleNotification("Joining Chat...", "Connecting as User: " + myName);
             messageOrder ++;
+            // send notification
+            if(messageOrder == 1) {
+                notificationDecorator.displaySimpleNotification(title, "Hello Phong!");
+            } else if(messageOrder == 2) {
+                notificationDecorator.displaySimpleNotification(title, "How are you?");
+            } else if(messageOrder == 3) {
+                notificationDecorator.displaySimpleNotification(title, "Good Bye Phong!");
+            }
+            // send broadcast
             sendBroadcastGenerateMsg(messageOrder);
+        } else if(command == CMD_STOP) {
+            // stop service
+            notificationDecorator.displaySimpleNotification(title, "ChatBot Stopped: 06");
         }
     }
 

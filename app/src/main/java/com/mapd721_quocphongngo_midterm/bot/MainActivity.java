@@ -45,8 +45,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void stopService(View v) {
+        // Stop service button clicked.
         // send notification
-
+        tvResult.setText("Stop Service");
+        Bundle data = new Bundle();
+        data.putInt(BotService.CMD, BotService.CMD_STOP);
+        Intent intent = new Intent(this, BotService.class);
+        intent.putExtras(data);
+        startService(intent);
     }
 
     private final BroadcastReceiver mServiceStateChangeReceiver = new BroadcastReceiver() {
